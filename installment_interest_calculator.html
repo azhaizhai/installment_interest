@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>全款转分期利息计算器(非复利场景)</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
+    label { display: block; margin-top: 10px; }
+    input { width: 100%; padding: 5px; margin-top: 3px; }
+    button { margin-top: 15px; padding: 8px 12px; }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>分期利息计算器</h2>
+
+  <label>汽车总价（car_price）</label>
+  <input id="car_price" type="number" placeholder="例如：200000">
+
+  <label>首付百分比（down_payment_percent）</label>
+  <input id="down_payment_percent" type="number" placeholder="例如：30">
+
+  <label>贷款期数（月）（installment_months）</label>
+  <input id="installment_months" type="number" placeholder="例如：36">
+
+  <label>免息期数（月）（interest_free_months）</label>
+  <input id="interest_free_months" type="number" placeholder="例如：6">
+
+  <label>投资年利率（%）（annual_interest_rate）</label>
+  <input id="annual_interest_rate" type="number" placeholder="例如：3.5">
+
+  <button id="calc_btn">计算总利息</button>
+
+  <div id="result"></div>
+
+  <script>
+    function installment_interest(car_price, down_payment_percent, installment_months, interest_free_months, annual_interest_rate) {
+      let monthly_interest_rate = annual_interest_rate / 100 / 12;
+      let down_payment = car_price * down_payment_percent / 100;
+      let loan_amount = car_price - down_payment;
+      let monthly_payment = loan_amount / installment_months;
+      let total_interest = 0;
+
+      for (let i = 0; i < interest_free_months; i++) {
+        total_interest += loan_amount * (i + 1) * monthly_interest_rate;
+        loan_amount -= monthly_payment;
+      }
+
+      return total_interest;
+    }
+
+    $("#calc_btn").click(function() {
+      let car_price = parseFloat($("#car_price").val());
+      let down_payment_percent = parseFloat($("#down_payment_percent").val());
+      let installment_months = parseInt($("#installment_months").val());
+      let interest_free_months = parseInt($("#interest_free_months").val());
+      let annual_interest_rate = parseFloat($("#annual_interest_rate").val());
+
+      if (isNaN(car_price) || isNaN(down_payment_percent) || isNaN(installment_months) || isNaN(interest_free_months) || isNaN(annual_interest_rate)) {
+        $("#result").text("请填写所有字段！");
+        return;
+      }
+
+      let total_interest = installment_interest(car_price, down_payment_percent, installment_months, interest_free_months, annual_interest_rate);
+      $("#result").text("总利息：" + total_interest.toFixed(2) + " 元");
+    });
+  </script>
+</body>
+</html>
