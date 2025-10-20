@@ -43,7 +43,7 @@
       let total_interest = 0;
 
       for (let i = 0; i < interest_free_months; i++) {
-        total_interest += loan_amount * (i + 1) * monthly_interest_rate;
+        total_interest += loan_amount * monthly_interest_rate;
         loan_amount -= monthly_payment;
       }
 
